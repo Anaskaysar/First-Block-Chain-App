@@ -19,3 +19,7 @@ We have created certain functions to make this happened. Rather than putting blo
 In this part we will try to find out if a block chain is valid or invalid. Thorugh a simple function.  In this isBlockchainvalid function we will compare all the block's hash and previous hash to check whether any data is tempered or not. 
 
 If the data is tempered it will return false or else it will return true.
+
+# Mining
+
+Auto block mining

@@ -6,11 +6,22 @@ class Block {
     this.data = data;
     this.prevHash = prevHash;
     this.hash = this.calculateHash();
+    this.nonce = 0;
+  }
+
+  mineBlock(difficulty) {
+    while (
+      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
+    ) {
+      this.nonce++;
+      this.hash = this.calculateHash();
+    }
+    console.log("Mining Done : " + this.hash);
   }
 
   calculateHash() {
     return sha256(
-      this.timestamp + JSON.stringify(this.data) + this.prevHash
+      this.timestamp + JSON.stringify(this.data) + this.prevHash + this.nonce
     ).toString();
   }
 }
@@ -18,6 +29,7 @@ class Block {
 class Blockchain {
   constructor() {
     this.chain = [this.generateGenesisBlock()];
+    this.difficulty = 2;  //Block chain difficulty can be increased 3,4,5,6..........
   }
 
   generateGenesisBlock() {
@@ -29,7 +41,8 @@ class Blockchain {
 
   addBlock(newBlock) {
     newBlock.prevHash = this.getLatestBlock().hash;
-    newBlock.hash = newBlock.calculateHash(); //confusion
+    // newBlock.hash = newBlock.calculateHash(); //confusion
+    newBlock.mineBlock(this.difficulty);
     this.chain.push(newBlock);
   }
 
@@ -38,15 +51,12 @@ class Blockchain {
       //because i=0 mean genesis block which do not have any prev block
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1];
-
       if (currentBlock.hash !== currentBlock.calculateHash()) {
         return false;
       }
-
       if (currentBlock.prevHash !== previousBlock.hash) {
         return false;
       }
-
       return true;
     }
   }
@@ -54,10 +64,11 @@ class Blockchain {
 
 const joshCoin = new Blockchain();
 
-const block = new Block("2022-01-01", { amount: 5 });
+const block1 = new Block("2022-01-01", { amount: 5 });
+const block2 = new Block("2022-01-01", { amount: 5 });
 
-joshCoin.addBlock(block);
-console.log(joshCoin.isBlockChainValid());
+joshCoin.addBlock(block1);
+joshCoin.addBlock(block2);
 
-joshCoin.chain[1].data = "HACKED";
-console.log(joshCoin.isBlockChainValid());
+
+console.log(joshCoin);
