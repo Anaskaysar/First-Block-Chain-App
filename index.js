@@ -32,14 +32,32 @@ class Blockchain {
     newBlock.hash = newBlock.calculateHash(); //confusion
     this.chain.push(newBlock);
   }
+
+  isBlockChainValid() {
+    for (let i = 1; i < this.chain.length; i++) {
+      //because i=0 mean genesis block which do not have any prev block
+      const currentBlock = this.chain[i];
+      const previousBlock = this.chain[i - 1];
+
+      if (currentBlock.hash !== currentBlock.calculateHash()) {
+        return false;
+      }
+
+      if (currentBlock.prevHash !== previousBlock.hash) {
+        return false;
+      }
+
+      return true;
+    }
+  }
 }
 
 const joshCoin = new Blockchain();
 
 const block = new Block("2022-01-01", { amount: 5 });
 
-// console.log(block);
-
 joshCoin.addBlock(block);
+console.log(joshCoin.isBlockChainValid());
 
-console.log(joshCoin);
+joshCoin.chain[1].data = "HACKED";
+console.log(joshCoin.isBlockChainValid());
